@@ -1048,3 +1048,460 @@ interface EngagementMetrics {
 - content_assets (full-text search)
 - trends (time-series analysis)
 - engagement_metrics (analytics queries)
+
+## 
+Correctness Properties
+
+### What are Correctness Properties?
+
+A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees. Unlike unit tests that verify specific examples, properties express universal rules that must hold for all valid inputs, making them powerful tools for catching edge cases and ensuring system-wide correctness.
+
+### Properties
+
+**Property 1: Topic Generation Quantity and Timeliness**
+*For any* Creator request for topic suggestions, the AI_Engine should return at least 10 unique content angles within 3 seconds.
+**Validates: Requirements 1.1**
+
+**Property 2: Cross-Genre Topic Diversity**
+*For any* topic generation request, the returned suggestions should include source metadata indicating analysis from at least 5 different content categories.
+**Validates: Requirements 1.2**
+
+**Property 3: Topic Novelty Detection**
+*For any* Creator with existing content history and any seed topic, the AI_Engine should return at least 3 content angles with similarity scores below 85% compared to the Creator's previous 50 Content_Assets.
+**Validates: Requirements 1.3, 1.5**
+
+**Property 4: Topic Relevance Score Validity**
+*For any* set of topic suggestions, all suggestions should include relevance scores within the range [0, 100].
+**Validates: Requirements 1.4**
+
+**Property 5: Script Generation Performance**
+*For any* valid Content_Brief, the AI_Engine should produce a complete script draft within 10 seconds.
+**Validates: Requirements 2.1**
+
+**Property 6: Voice Consistency Preservation**
+*For any* Creator with an established Voice_Profile, generated scripts should achieve a voice consistency score of at least 90%.
+**Validates: Requirements 2.2, 8.2**
+
+**Property 7: Micro-Storytelling Structure Completeness**
+*For any* script generated for micro-storytelling formats, the output should contain identifiable hook, development, and resolution sections within the specified duration constraints.
+**Validates: Requirements 2.3**
+
+**Property 8: Narrative Variation Generation**
+*For any* content request for narrative variations, the AI_Engine should provide at least 5 alternative story structures with measurable structural differences.
+**Validates: Requirements 2.4**
+
+**Property 9: Safety Filtering Before Presentation**
+*For any* generated script containing potentially sensitive content (hate speech, violence, explicit material, misinformation), the Safety_Filter should flag it before presentation to the Creator.
+**Validates: Requirements 2.5, 9.1, 9.2**
+
+**Property 10: Platform-Specific Content Optimization**
+*For any* script and target platform (YouTube, TikTok, LinkedIn, Substack), the optimized output should meet platform-specific requirements including appropriate length, tone, structure, and required metadata elements (timestamps for YouTube, hashtags for TikTok, professional tone for LinkedIn, HTML structure for Substack).
+**Validates: Requirements 3.1, 3.2, 3.3, 3.4**
+
+**Property 11: A/B Test Variant Generation**
+*For any* script submitted for A/B testing, the Platform should generate at least 2 variations with measurable differences in hook, pacing, or call-to-action elements.
+**Validates: Requirements 3.5**
+
+**Property 12: Content Transformation Performance**
+*For any* valid Content_Asset and target format (podcast, newsletter, social media), the Transformation_Pipeline should complete the conversion within 15 seconds.
+**Validates: Requirements 4.1**
+
+**Property 13: Transformation Semantic Preservation**
+*For any* podcast content transformed to newsletter format, the output should preserve key points, quotes, and narrative flow with semantic similarity score above 85%.
+**Validates: Requirements 4.2**
+
+**Property 14: Multi-Variant Social Media Generation**
+*For any* long-form content transformed to social media format, the Platform should create at least 5 platform-optimized variants.
+**Validates: Requirements 4.3**
+
+**Property 15: Accessibility Standards Compliance**
+*For any* transformed content containing images or audio, the output should include alt text for images and transcripts for audio content.
+**Validates: Requirements 4.4**
+
+**Property 16: Structural Marker Preservation**
+*For any* source content containing timestamps or chapter markers, the transformed output should preserve these structural markers in an appropriate format for the target medium.
+**Validates: Requirements 4.5**
+
+**Property 17: Engagement Score Prediction Completeness**
+*For any* Publishing_Schedule view, all planned Content_Assets should display predicted engagement scores.
+**Validates: Requirements 5.1**
+
+**Property 18: Weekly Content Gap Identification**
+*For any* week of content calendar analysis, the Trend_Analyzer should identify at least 3 Content_Gaps based on audience demand signals.
+**Validates: Requirements 5.2**
+
+**Property 19: Publishing Time Recommendations with Ranges**
+*For any* content requiring publishing time recommendations, the Platform should provide optimal time slots with expected performance ranges based on historical Engagement_Metrics.
+**Validates: Requirements 5.3**
+
+**Property 20: Content Spacing Recommendations**
+*For any* set of Content_Assets targeting similar topics (similarity > 80%), the Platform should recommend spacing of at least 72 hours between publications.
+**Validates: Requirements 5.5**
+
+**Property 21: Collaborative AI Response Timeliness**
+*For any* idea contribution in a Collaborative_Session, the AI_Engine should respond with relevant suggestions within 2 seconds.
+**Validates: Requirements 6.2**
+
+**Property 22: AI Contextual Reference Depth**
+*For any* AI response in a Collaborative_Session (after at least 3 ideas have been contributed), the response should reference at least 3 prior contributions from the session.
+**Validates: Requirements 6.3**
+
+**Property 23: Collaborative Vote Tracking Accuracy**
+*For any* Collaborative_Session with participant votes, the Platform should correctly track vote counts and highlight the top-rated concepts in real-time.
+**Validates: Requirements 6.5**
+
+**Property 24: Session Export Completeness**
+*For any* ended Collaborative_Session, the exported Content_Brief should contain all session ideas, AI contributions, and decisions in a structured format.
+**Validates: Requirements 6.6**
+
+**Property 25: Multi-Platform Metrics Aggregation**
+*For any* audience data analysis, the Platform should aggregate Engagement_Metrics from at least 5 connected platforms.
+**Validates: Requirements 7.1**
+
+**Property 26: Audience Overlap Confidence Threshold**
+*For any* displayed audience insights showing overlapping segments, the identified overlaps should have confidence scores above 80%.
+**Validates: Requirements 7.2**
+
+**Property 27: Performance Variance Explanation Depth**
+*For any* Content_Asset with performance differences across platforms, the Platform should provide analysis with at least 3 contributing factors explaining the variance.
+**Validates: Requirements 7.3**
+
+**Property 28: Platform Distribution Predictions**
+*For any* content requiring distribution recommendations, the Platform should predict engagement levels for each target platform.
+**Validates: Requirements 7.4**
+
+**Property 29: Voice Profile Isolation in Workspaces**
+*For any* Workspace with multiple team members, each Creator should maintain a separate, distinct Voice_Profile that does not interfere with other members' profiles.
+**Validates: Requirements 8.4**
+
+**Property 30: Voice Analysis Report Completeness**
+*For any* Creator voice analysis request, the generated report should include vocabulary patterns, sentence structure preferences, and tonal characteristics.
+**Validates: Requirements 8.5**
+
+**Property 31: Safety Scan Performance**
+*For any* content generated or uploaded, the Safety_Filter should complete scanning for policy violations within 2 seconds.
+**Validates: Requirements 9.1**
+
+**Property 32: Safety Flag Detail and Explanation**
+*For any* content flagged as potentially problematic, the Platform should identify specific passages and provide explanations for each concern.
+**Validates: Requirements 9.2**
+
+**Property 33: Multi-Region Compliance Verification**
+*For any* content targeting multiple regions, the Platform should verify compliance with all applicable regulations (GDPR, CCPA, regional content laws) for those regions.
+**Validates: Requirements 9.3**
+
+**Property 34: Platform Policy Validation**
+*For any* content export to external platforms (YouTube, TikTok, LinkedIn, Substack), the Platform should validate the content against that platform's specific community guidelines.
+**Validates: Requirements 9.4**
+
+**Property 35: Factual Claim Detection and Verification**
+*For any* content containing factual claims requiring verification, the Platform should highlight those claims and suggest verification sources.
+**Validates: Requirements 9.5**
+
+**Property 36: Cross-Language Voice Preservation**
+*For any* Content_Asset translation, the output should preserve the Creator's Voice_Profile characteristics in the target language with consistency score above 85%.
+**Validates: Requirements 10.2**
+
+**Property 37: Cultural Reference Adaptation**
+*For any* content containing cultural references being translated, the Platform should either adapt the references for the target culture or provide explanatory context.
+**Validates: Requirements 10.4**
+
+**Property 38: Regional Content Optimization**
+*For any* content optimized for international platforms, the Platform should apply region-specific best practices for content structure and timing appropriate to the target region.
+**Validates: Requirements 10.5**
+
+**Property 39: Historical Data Analysis Scope**
+*For any* performance trend analysis, the Platform should analyze at least 30 days of historical data.
+**Validates: Requirements 11.2**
+
+**Property 40: Underperformance Recommendation Quantity**
+*For any* content identified as underperforming, the Platform should provide at least 3 specific, actionable recommendations for improvement.
+**Validates: Requirements 11.3**
+
+**Property 41: A/B Test Statistical Rigor**
+*For any* A/B test conducted, the Platform should only declare a winner when statistical confidence exceeds 95%.
+**Validates: Requirements 11.4**
+
+**Property 42: Cross-Platform Metric Normalization**
+*For any* comparison between Content_Assets across different platforms, the Platform should normalize engagement metrics to enable fair comparison.
+**Validates: Requirements 11.5**
+
+**Property 43: Platform Export Completeness**
+*For any* content export to a specific platform (YouTube, TikTok, LinkedIn, Substack), the export should include all platform-required elements (YouTube: title, description, tags, timestamps, thumbnails; TikTok: hashtags, captions, audio suggestions; LinkedIn: professional formatting, document attachments; Substack: HTML structure, images, embedded media).
+**Validates: Requirements 12.2, 12.3, 12.4, 12.5**
+
+**Property 44: Export Error Handling**
+*For any* failed export operation, the Platform should provide clear error messages and fallback options within 5 seconds.
+**Validates: Requirements 12.6**
+
+**Property 45: Contributor Approval Workflow**
+*For any* content created by a user with Contributor role, the Platform should require approval from an Editor or Owner before allowing publication.
+**Validates: Requirements 13.2**
+
+**Property 46: Multi-Editor Version Tracking**
+*For any* Content_Asset edited by multiple Creators, the Platform should track all changes and enable version comparison.
+**Validates: Requirements 13.3**
+
+**Property 47: Collaborative Editing Conflict Preservation**
+*For any* editing conflict that occurs during collaborative editing, the Platform should preserve all conflicting versions and allow manual merge.
+**Validates: Requirements 13.4**
+
+**Property 48: Trend Velocity Calculation**
+*For any* emerging trend detected, the Platform should calculate and provide a trend velocity score indicating the growth rate.
+**Validates: Requirements 14.2**
+
+**Property 49: Trend Longevity Confidence Intervals**
+*For any* trend longevity prediction, the Platform should provide confidence intervals for the predicted duration.
+**Validates: Requirements 14.4**
+
+**Property 50: Declining Trend Warnings**
+*For any* trend identified as declining or oversaturated, the Platform should warn Creators to avoid creating content on that topic.
+**Validates: Requirements 14.5**
+
+**Property 51: Script Pacing Issue Identification**
+*For any* script analyzed for pacing, the Platform should identify specific issues including slow sections, rushed transitions, and attention drop-off points.
+**Validates: Requirements 15.1**
+
+**Property 52: Pacing Engagement Visualization**
+*For any* pacing analysis performed, the Platform should visualize engagement predictions across the content timeline.
+**Validates: Requirements 15.2**
+
+**Property 53: Pacing Improvement Recommendations**
+*For any* detected pacing issue, the Platform should suggest specific edits to improve content flow.
+**Validates: Requirements 15.3**
+
+**Property 54: Engaging Pacing Pattern Identification**
+*For any* Creator with multiple Content_Assets, pacing analysis should identify the Creator's most engaging pacing patterns based on historical performance.
+**Validates: Requirements 15.4**
+
+**Property 55: Optimal Cut Point Recommendations**
+*For any* content exceeding optimal length for the target platform, the Platform should recommend cut points that minimize predicted engagement loss.
+**Validates: Requirements 15.5**
+
+## Error Handling
+
+### Error Categories and Strategies
+
+**1. AI Generation Errors**
+- **Timeout**: If LLM API doesn't respond within 15 seconds, return cached similar content with disclaimer
+- **Rate Limit**: Queue request and retry with exponential backoff (1s, 2s, 4s, 8s, 16s)
+- **Content Policy Violation**: Return error with specific policy violated and suggestions for modification
+- **Low Quality Output**: Regenerate with adjusted temperature and prompt refinement (max 3 attempts)
+
+**2. Real-Time Collaboration Errors**
+- **WebSocket Disconnection**: Attempt automatic reconnection with exponential backoff, preserve session state in Redis
+- **Participant Limit Exceeded**: Return error and suggest creating new session or removing inactive participants
+- **AI Response Timeout**: Display "AI is thinking..." message, continue session without AI contribution
+- **Session State Corruption**: Restore from last known good state (checkpointed every 60 seconds)
+
+**3. Content Transformation Errors**
+- **Unsupported Format**: Return clear error listing supported formats and suggest alternatives
+- **Transformation Quality Too Low**: Retry with different transformation strategy, offer manual editing option
+- **Media Processing Failure**: Fall back to text-only transformation, notify user of media issue
+- **Accessibility Generation Failure**: Flag content as requiring manual accessibility review
+
+**4. Export and Integration Errors**
+- **Platform Authentication Failure**: Prompt user to re-authenticate with clear instructions
+- **Platform API Rate Limit**: Queue export and retry after rate limit reset time
+- **Content Policy Rejection**: Return platform-specific error and suggest modifications
+- **Network Timeout**: Retry with exponential backoff (max 5 attempts), then queue for manual review
+- **Platform API Changes**: Log error, notify engineering team, provide manual export option
+
+**5. Data Consistency Errors**
+- **Concurrent Edit Conflict**: Preserve both versions, notify users, provide merge interface
+- **Voice Profile Corruption**: Fall back to previous version, notify user to re-train if needed
+- **Missing Dependencies**: Return clear error identifying missing data and recovery steps
+- **Database Connection Failure**: Retry with connection pool, fall back to read-only mode if persistent
+
+### Error Response Format
+
+All API errors follow consistent structure:
+
+```typescript
+interface ErrorResponse {
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, any>;
+    retryable: boolean;
+    retryAfter?: number;
+    suggestions?: string[];
+  };
+  requestId: string;
+  timestamp: Date;
+}
+```
+
+### Monitoring and Alerting
+
+- **Error Rate Threshold**: Alert if error rate exceeds 5% of requests
+- **Critical Errors**: Immediate PagerDuty alert for authentication, data loss, or safety filter failures
+- **Performance Degradation**: Alert if p95 latency exceeds SLA by 50%
+- **External API Failures**: Alert if any platform API has >10% failure rate
+
+## Testing Strategy
+
+### Dual Testing Approach
+
+The platform requires both unit testing and property-based testing to ensure comprehensive coverage. These approaches are complementary:
+
+- **Unit Tests**: Verify specific examples, edge cases, error conditions, and integration points
+- **Property Tests**: Verify universal properties across all inputs through randomized testing
+
+Together, they provide comprehensive coverage where unit tests catch concrete bugs and property tests verify general correctness across the input space.
+
+### Property-Based Testing Configuration
+
+**Framework Selection**:
+- **TypeScript/JavaScript**: fast-check library
+- **Python** (if used for ML components): Hypothesis library
+
+**Test Configuration**:
+- Minimum 100 iterations per property test (due to randomization)
+- Each property test must reference its design document property
+- Tag format: `// Feature: ai-content-creation-platform, Property {number}: {property_text}`
+
+**Example Property Test Structure**:
+
+```typescript
+import fc from 'fast-check';
+
+// Feature: ai-content-creation-platform, Property 1: Topic Generation Quantity and Timeliness
+describe('Topic Generation', () => {
+  it('should generate at least 10 unique topics within 3 seconds', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.record({
+          creatorId: fc.uuid(),
+          context: fc.string(),
+          preferences: fc.record({
+            categories: fc.array(fc.string(), { minLength: 1, maxLength: 10 }),
+            excludeTopics: fc.array(fc.string())
+          })
+        }),
+        async (request) => {
+          const startTime = Date.now();
+          const topics = await aiEngine.generateTopics(request);
+          const duration = Date.now() - startTime;
+          
+          expect(topics.length).toBeGreaterThanOrEqual(10);
+          expect(duration).toBeLessThan(3000);
+          expect(new Set(topics.map(t => t.topic)).size).toBe(topics.length); // uniqueness
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+});
+```
+
+### Unit Testing Strategy
+
+**Focus Areas for Unit Tests**:
+1. **Specific Examples**: Concrete test cases demonstrating correct behavior
+2. **Edge Cases**: Empty inputs, maximum lengths, boundary conditions
+3. **Error Conditions**: Invalid inputs, missing data, malformed requests
+4. **Integration Points**: API contracts, database interactions, external service calls
+
+**Unit Test Balance**:
+- Avoid writing too many unit tests for scenarios covered by property tests
+- Focus unit tests on specific examples that illustrate important behaviors
+- Use unit tests for integration testing between components
+- Property tests handle comprehensive input coverage
+
+**Example Unit Test Structure**:
+
+```typescript
+describe('Voice Profile System', () => {
+  it('should create profile from minimum 10 samples', async () => {
+    const samples = createMockContentAssets(10);
+    const profile = await voiceProfileSystem.createProfile('creator-123', samples);
+    
+    expect(profile.creatorId).toBe('creator-123');
+    expect(profile.vocabularyDistribution.size).toBeGreaterThan(0);
+    expect(profile.consistencyThreshold).toBe(0.9);
+  });
+  
+  it('should reject profile creation with fewer than 10 samples', async () => {
+    const samples = createMockContentAssets(9);
+    
+    await expect(
+      voiceProfileSystem.createProfile('creator-123', samples)
+    ).rejects.toThrow('Minimum 10 content samples required');
+  });
+  
+  it('should handle empty content gracefully', async () => {
+    const samples = createMockContentAssets(10, { content: '' });
+    
+    await expect(
+      voiceProfileSystem.createProfile('creator-123', samples)
+    ).rejects.toThrow('Content samples must not be empty');
+  });
+});
+```
+
+### Integration Testing
+
+**Critical Integration Points**:
+1. **AI Service Integration**: Test LLM API calls, prompt engineering, response parsing
+2. **Platform API Integration**: Test YouTube, TikTok, LinkedIn, Substack export flows
+3. **Real-Time Collaboration**: Test WebSocket connections, session synchronization
+4. **Database Operations**: Test transaction handling, concurrent access, data consistency
+
+**Integration Test Approach**:
+- Use test doubles for external services (mocks, stubs)
+- Test happy paths and error scenarios
+- Verify retry logic and error handling
+- Test rate limiting and backoff strategies
+
+### End-to-End Testing
+
+**Critical User Flows**:
+1. **Content Creation Flow**: Idea → Brief → Script → Optimization → Export
+2. **Collaborative Brainstorming**: Session creation → AI participation → Summary generation
+3. **Voice Profile Learning**: Sample upload → Profile creation → Content generation with voice
+4. **Multi-Platform Publishing**: Content creation → Transformation → Export to 4 platforms
+
+**E2E Test Environment**:
+- Staging environment with test accounts
+- Mock external platform APIs to avoid rate limits
+- Automated test suite running on every deployment
+- Manual smoke testing for critical features
+
+### Performance Testing
+
+**Load Testing Scenarios**:
+1. **Concurrent Users**: Test 10,000 simultaneous users
+2. **AI Request Burst**: Test 1,000 content generation requests in 1 minute
+3. **Collaborative Sessions**: Test 100 simultaneous sessions with 10 participants each
+4. **Content Transformation**: Test batch transformation of 1,000 assets
+
+**Performance Metrics**:
+- API response time: p50, p95, p99
+- AI generation latency
+- WebSocket message latency
+- Database query performance
+- External API call duration
+
+### Security Testing
+
+**Security Test Areas**:
+1. **Authentication**: Test OAuth flows, token expiration, refresh logic
+2. **Authorization**: Test role-based permissions, workspace isolation
+3. **Input Validation**: Test SQL injection, XSS, command injection
+4. **Data Encryption**: Verify encryption at rest and in transit
+5. **Rate Limiting**: Test API rate limits and abuse prevention
+
+### Continuous Testing
+
+**CI/CD Pipeline**:
+1. **Pre-commit**: Linting, type checking, unit tests
+2. **Pull Request**: Unit tests, integration tests, property tests
+3. **Staging Deployment**: E2E tests, performance tests
+4. **Production Deployment**: Smoke tests, canary deployment monitoring
+
+**Test Coverage Goals**:
+- Unit test coverage: 80%+ for business logic
+- Integration test coverage: All external service integrations
+- Property test coverage: All correctness properties from design
+- E2E test coverage: All critical user flows
