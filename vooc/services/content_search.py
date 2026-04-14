@@ -22,51 +22,81 @@ class ContentSearchService:
             raise ValueError("Search query cannot be empty")
 
         results = []
-        for provider in (_search_duckduckgo, _search_wikipedia, _search_grokipedia):
+        for provider in (_search_ddgs, _search_wikipedia_pkg, _search_grokipedia_pkg, _search_fallback_wikipedia_opensearch):
             try:
                 results.extend(provider(normalized))
             except Exception:  # noqa: BLE001
                 continue
 
         deduped = _dedupe_by_url(results)
-        return sorted(deduped, key=lambda item: item.score, reverse=True)[:15]
+        return sorted(deduped, key=lambda item: item.score, reverse=True)[:20]
 
 
-def _search_duckduckgo(query: str) -> list[SearchResult]:
-    params = urllib.parse.urlencode({"q": query, "format": "json", "no_html": "1", "skip_disambig": "1"})
-    data = _fetch_json(f"https://api.duckduckgo.com/?{params}")
+def _search_ddgs(query: str) -> list[SearchResult]:
+    try:
+        from ddgs import DDGS  # type: ignore
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError("ddgs package not available") from exc
 
     results: list[SearchResult] = []
-    abstract = data.get("AbstractText")
-    abstract_url = data.get("AbstractURL")
-    if abstract and abstract_url:
-        results.append(SearchResult(data.get("Heading") or "DuckDuckGo Result", abstract, "duckduckgo", abstract_url, 0.95))
-
-    for topic in data.get("RelatedTopics", [])[:7]:
-        text = topic.get("Text") if isinstance(topic, dict) else None
-        first_url = topic.get("FirstURL") if isinstance(topic, dict) else None
-        if text and first_url:
-            results.append(SearchResult(text.split(" - ")[0], text, "duckduckgo", first_url, 0.75))
+    with DDGS() as client:
+        for idx, item in enumerate(client.text(query, max_results=8)):
+            title = str(item.get("title", "")).strip()
+            snippet = str(item.get("body", "")).strip()
+            href = str(item.get("href", "")).strip()
+            if title and href:
+                results.append(SearchResult(title, snippet, "ddgs", href, 0.95 - idx * 0.03))
 
     return results
 
 
-def _search_wikipedia(query: str) -> list[SearchResult]:
-    params = urllib.parse.urlencode({"action": "query", "list": "search", "srsearch": query, "utf8": "1", "format": "json"})
-    data = _fetch_json(f"https://en.wikipedia.org/w/api.php?{params}")
+def _search_wikipedia_pkg(query: str) -> list[SearchResult]:
+    try:
+        import wikipedia  # type: ignore
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError("wikipedia package not available") from exc
 
-    entries = data.get("query", {}).get("search", [])[:7]
+    titles = wikipedia.search(query, results=5)
     results: list[SearchResult] = []
-    for idx, item in enumerate(entries):
-        title = item.get("title", "")
-        snippet = str(item.get("snippet", "")).replace("<span class=\"searchmatch\">", "").replace("</span>", "")
-        pageid = item.get("pageid")
-        if title and pageid:
-            results.append(SearchResult(title, snippet, "wikipedia", f"https://en.wikipedia.org/?curid={pageid}", 0.85 - idx * 0.03))
+
+    for idx, title in enumerate(titles):
+        try:
+            summary = wikipedia.summary(title, sentences=2)
+            page = wikipedia.page(title, auto_suggest=False)
+        except Exception:  # noqa: BLE001
+            continue
+
+        results.append(SearchResult(str(title), str(summary), "wikipedia", str(page.url), 0.86 - idx * 0.04))
     return results
 
 
-def _search_grokipedia(query: str) -> list[SearchResult]:
+def _search_grokipedia_pkg(query: str) -> list[SearchResult]:
+    try:
+        import grokipedia_api  # type: ignore
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError("grokipedia-api package not available") from exc
+
+    raw_results = []
+    if hasattr(grokipedia_api, "search"):
+        raw_results = grokipedia_api.search(query)
+    elif hasattr(grokipedia_api, "GrokipediaAPI"):
+        client = grokipedia_api.GrokipediaAPI()
+        raw_results = client.search(query)
+    else:
+        raise RuntimeError("Unsupported grokipedia_api interface")
+
+    results: list[SearchResult] = []
+    for idx, item in enumerate(raw_results[:6]):
+        title = str(item.get("title") or item.get("name") or "").strip()
+        snippet = str(item.get("snippet") or item.get("summary") or "").strip()
+        url = str(item.get("url") or item.get("link") or "").strip()
+        if title and url:
+            results.append(SearchResult(title, snippet, "grokipedia", url, 0.78 - idx * 0.04))
+
+    return results
+
+
+def _search_fallback_wikipedia_opensearch(query: str) -> list[SearchResult]:
     params = urllib.parse.urlencode({"action": "opensearch", "search": query, "limit": "5", "namespace": "0", "format": "json"})
     data = _fetch_json(f"https://en.wikipedia.org/w/api.php?{params}")
 
@@ -79,7 +109,7 @@ def _search_grokipedia(query: str) -> list[SearchResult]:
         url = urls[idx] if idx < len(urls) else ""
         snippet = snippets[idx] if idx < len(snippets) else ""
         if url:
-            results.append(SearchResult(title, snippet, "grokipedia", url, 0.65 - idx * 0.04))
+            results.append(SearchResult(title, snippet, "wikipedia", url, 0.60 - idx * 0.03))
     return results
 
 
