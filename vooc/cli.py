@@ -32,7 +32,7 @@ def run() -> None:
 
     print(ascii_art())
     print("Welcome to vooc")
-    print("Create content, continue conversations by session, search, and generate voice/images.\n")
+    print("Create content with persistent memory and asset tracking per session.\n")
 
     while True:
         print_menu(current_session)
@@ -64,6 +64,7 @@ def run() -> None:
                 generated = ai.generate_content(req, context=context)
                 sessions.append(current_session, "user", prompt)
                 sessions.append(current_session, "assistant", generated.content)
+                sessions.register_artifact(current_session, "text", f"session://{current_session}/turn", prompt)
                 print("\nAssistant:\n")
                 print(generated.content)
             elif choice == "5":
@@ -80,6 +81,7 @@ def run() -> None:
                 text = input("Text to synthesize: ").strip()
                 output = input("Output file path [default: ./vooc-voice.wav]: ").strip() or "./vooc-voice.wav"
                 result = voice.synthesize(text, output)
+                sessions.register_artifact(current_session, "voice", result.output_path, text)
                 print(f"Saved voice output to {result.output_path}")
             elif choice == "8":
                 prompt = input("Image prompt: ").strip()
@@ -88,9 +90,12 @@ def run() -> None:
                 result = images.generate(prompt, output, context=context)
                 sessions.append(current_session, "user", f"[image] {prompt}")
                 sessions.append(current_session, "assistant", f"[image-generated] {result.output_path}")
+                sessions.register_artifact(current_session, "image", result.output_path, prompt)
                 print(f"Saved image to {result.output_path}")
             elif choice == "9":
                 print(model_client.preload_model())
+            elif choice == "10":
+                print("\n" + sessions.session_brief(current_session))
             elif choice == "0":
                 print("Goodbye from vooc 👋")
                 return
@@ -124,6 +129,7 @@ def print_menu(current_session: str) -> None:
     print("7) Generate voice")
     print("8) Generate image")
     print("9) Prepare local model")
+    print("10) Session brief (USP)")
     print("0) Exit")
 
 
