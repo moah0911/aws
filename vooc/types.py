@@ -18,6 +18,7 @@ class ContentGenerationRequest:
     constraints: ContentConstraints
     voice_profile_id: str | None = None
     target_platform: Platform | None = None
+    session_id: str | None = None
 
 
 @dataclass

@@ -39,13 +39,12 @@ class AIEngine:
         self.voice_profiles[profile.id] = profile
         return profile
 
-    def generate_content(self, request: ContentGenerationRequest) -> GeneratedContent:
+    def generate_content(self, request: ContentGenerationRequest, context: str = "") -> GeneratedContent:
         if not request.brief_id.strip() or not request.prompt.strip():
             raise ValueError("brief_id and prompt are required")
 
         profile = self.voice_profiles.get(request.voice_profile_id) if request.voice_profile_id else None
-        prompt = "\n".join(
-            [
+        prompt_parts = [
                 f"Brief ID: {request.brief_id}",
                 f"Prompt: {request.prompt}",
                 f"Target platform: {request.target_platform or 'generic'}",
@@ -54,7 +53,9 @@ class AIEngine:
                 "Return a production-ready script with sections: Hook, Development, Resolution, CTA.",
                 "Ensure clarity, factual caution, and platform-safe language.",
             ]
-        )
+        if context.strip():
+            prompt_parts.insert(0, f"Recent session context:\n{context}")
+        prompt = "\n".join(prompt_parts)
 
         try:
             draft = self.local_model.generate(prompt)
